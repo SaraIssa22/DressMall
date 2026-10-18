@@ -1,0 +1,176 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Dress item in DressMallAI catalog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "categoryName": { "type": "string" },
+        "designerId": { "type": "string" },
+        "designerName": { "type": "string" },
+        "priceSYP": { "type": "number" },
+        "images": { "type": "array" },
+        "sizes": { "type": "array" },
+        "colors": { "type": "array" },
+        "inStock": { "type": "boolean" },
+        "estimatedDays": { "type": "string" },
+        "isCustomTailorable": { "type": "boolean" },
+        "isPublished": { "type": "boolean" },
+        "featured": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "priceSYP", "categoryId", "designerName", "isPublished"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Dress catalog classification category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "description": { "type": "string" },
+        "image": { "type": "string" }
+      },
+      "required": ["id", "name", "slug"]
+    },
+    "Designer": {
+      "title": "Designer",
+      "description": "Resident fashion designer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "bio": { "type": "string" },
+        "coverageArea": { "type": "string" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["id", "name", "title", "coverageArea"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase order for one or more dresses",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "city": { "type": "string" },
+        "detailedAddress": { "type": "string" },
+        "customerNotes": { "type": "string" },
+        "items": { "type": "array" },
+        "paymentMethod": { "type": "string" },
+        "paymentReference": { "type": "string" },
+        "paymentStatus": { "type": "string" },
+        "shippingMethod": { "type": "string" },
+        "shippingCost": { "type": "number" },
+        "subtotal": { "type": "number" },
+        "total": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "orderNumber", "customerName", "customerPhone", "city", "items", "paymentMethod", "total", "status"]
+    },
+    "CustomRequest": {
+      "title": "CustomRequest",
+      "description": "Custom tailoring and design request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "requestNumber": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "city": { "type": "string" },
+        "eventType": { "type": "string" },
+        "dressType": { "type": "string" },
+        "preferredDesignerId": { "type": "string" },
+        "preferredDesignerName": { "type": "string" },
+        "usualSize": { "type": "string" },
+        "heightCm": { "type": "string" },
+        "bustCm": { "type": "string" },
+        "waistCm": { "type": "string" },
+        "hipsCm": { "type": "string" },
+        "measurementNotes": { "type": "string" },
+        "preferredColor": { "type": "string" },
+        "fabricNotes": { "type": "string" },
+        "designDescription": { "type": "string" },
+        "eventDate": { "type": "string" },
+        "referenceImageUrl": { "type": "string" },
+        "status": { "type": "string" },
+        "quotedPriceSYP": { "type": "number" },
+        "adminNotes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "requestNumber", "customerName", "customerPhone", "city", "dressType", "designDescription", "status"]
+    },
+    "StoreSettings": {
+      "title": "StoreSettings",
+      "description": "Store configuration and operational parameters",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "storeName": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "currency": { "type": "string" },
+        "shamCashPhone": { "type": "string" },
+        "shamCashRecipientName": { "type": "string" },
+        "shamCashInstructions": { "type": "string" },
+        "shamCashActive": { "type": "boolean" },
+        "qadmousActive": { "type": "boolean" },
+        "qadmousInstructions": { "type": "string" },
+        "qadmousCities": { "type": "array" },
+        "announcement": { "type": "string" }
+      },
+      "required": ["id", "storeName", "contactEmail"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized administrator",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Dress catalog products"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Dress categories"
+    },
+    "/designers/{designerId}": {
+      "schema": "Designer",
+      "description": "Fashion designers details"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders"
+    },
+    "/customRequests/{requestId}": {
+      "schema": "CustomRequest",
+      "description": "Custom tailoring requests"
+    },
+    "/storeSettings/{settingId}": {
+      "schema": "StoreSettings",
+      "description": "Global store settings"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Administrator registry"
+    }
+  }
+}

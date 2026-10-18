@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-serif-luxury {
+    font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif;
+    font-weight: 500;
+  }
+
+  p, span, label, input, select, textarea, button {
+    font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Tajawal', sans-serif;
+  }
+}
+
+/* Smooth minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FCFAF8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E5D5D3;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D1B8B6;
+}

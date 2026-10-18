@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="30" fill="#FAF5F3" stroke="#E8C4C4" stroke-width="2"/>
+  <!-- Dress silhouette / boutique sparkle icon -->
+  <path d="M26 14C28 17 36 17 38 14C39 21 37 25 35 27C38 34 45 46 47 50C44 51 32 52 17 50C19 46 26 34 29 27C27 25 25 21 26 14Z" fill="#A75D67"/>
+  <!-- Ribbon / Belt -->
+  <path d="M28 26.5C30 27 34 27 36 26.5L35.5 28.5C33.5 29 30.5 29 28.5 28.5L28 26.5Z" fill="#E5B869"/>
+  <!-- Star / Sparkle -->
+  <path d="M47 16L48 19L51 20L48 21L47 24L46 21L43 20L46 19L47 16Z" fill="#E5B869"/>
+</svg>
