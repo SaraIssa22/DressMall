@@ -82,14 +82,21 @@ export const storeService = {
       if (c.slug === 'daily' || c.id === 'cat-daily') {
         return { ...c, image: '/images/daily_dress_category_1792311556508.jpg' };
       }
+      if (c.slug === 'evening' || c.id === 'cat-evening') {
+        return { ...c, image: '/images/evening_sapphire_gown_1792394343066.jpg' };
+      }
       return c;
     };
 
     try {
       const snap = await getDocs(collection(db, path));
       if (!snap.empty) {
-        const cats = snap.docs.map(d => cleanCategory(d.data() as Category));
-        return cats.sort((a, b) => a.order - b.order);
+        const firestoreMap = new Map(snap.docs.map(d => [d.id, d.data() as Category]));
+        const combined = INITIAL_CATEGORIES.map(ic => firestoreMap.get(ic.id) || ic);
+        snap.docs.forEach(d => {
+          if (!combined.some(c => c.id === d.id)) combined.push(d.data() as Category);
+        });
+        return combined.map(cleanCategory).sort((a, b) => a.order - b.order);
       }
       return INITIAL_CATEGORIES.map(cleanCategory);
     } catch (error) {
@@ -113,7 +120,7 @@ export const storeService = {
     }
   },
 
-  // Fetch products with image sanitization (ensuring rose flower photo is never shown and modest/daily use appropriate images)
+  // Fetch products with image sanitization and support for enriched galleries
   async getProducts(): Promise<Product[]> {
     const path = 'products';
     const cleanProduct = (p: Product): Product => {
@@ -133,13 +140,107 @@ export const storeService = {
 
       // If daily dress, use newly generated tailored daily dress images
       if (p.categoryId === 'cat-daily') {
-        const dailyImages = p.id === 'dm-prod-004'
-          ? ['/images/daily_linen_dress_1792311555699.jpg', '/images/daily_shirtdress_chic_1792311557062.jpg']
-          : ['/images/daily_cotton_dress_1792311556565.jpg', '/images/daily_dress_category_1792311556508.jpg'];
+        if (p.id === 'dm-prod-004') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_linen_dress_1792311555699.jpg',
+              '/images/daily_shirtdress_chic_1792311557062.jpg',
+              '/images/daily_shirt_dress_1792394342695.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-008') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_cotton_dress_1792311556565.jpg',
+              '/images/daily_dress_category_1792311556508.jpg',
+              '/images/daily_floral_dress_1792394342263.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-010') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_shirt_dress_1792394342695.jpg',
+              '/images/daily_linen_dress_1792311555699.jpg',
+              '/images/daily_shirtdress_chic_1792311557062.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-011') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_floral_dress_1792394342263.jpg',
+              '/images/daily_cotton_dress_1792311556565.jpg',
+              '/images/daily_dress_category_1792311556508.jpg',
+            ],
+          };
+        }
+        if (p.images && p.images.length > 0) {
+          return p;
+        }
         return {
           ...p,
-          images: dailyImages,
+          images: [
+            '/images/daily_shirt_dress_1792394342695.jpg',
+            '/images/daily_floral_dress_1792394342263.jpg',
+          ],
         };
+      }
+
+      // If evening dress, ensure proper evening gowns
+      if (p.categoryId === 'cat-evening') {
+        if (p.id === 'dm-prod-012') {
+          return {
+            ...p,
+            images: [
+              '/images/evening_sapphire_gown_1792394343066.jpg',
+              'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=80',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-013') {
+          return {
+            ...p,
+            images: [
+              '/images/evening_champagne_draped_1792394344950.jpg',
+              'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=80',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-014') {
+          return {
+            ...p,
+            images: [
+              '/images/evening_ruby_velvet_1792394343337.jpg',
+              'https://images.unsplash.com/photo-1550614000-4895a10e1bfd?auto=format&fit=crop&w=1000&q=80',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-005') {
+          return {
+            ...p,
+            images: [
+              'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=80',
+              'https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?auto=format&fit=crop&w=1000&q=80',
+              '/images/evening_champagne_draped_1792394344950.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-009') {
+          return {
+            ...p,
+            images: [
+              'https://images.unsplash.com/photo-1550614000-4895a10e1bfd?auto=format&fit=crop&w=1000&q=80',
+              'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=80',
+              '/images/evening_ruby_velvet_1792394343337.jpg',
+            ],
+          };
+        }
       }
 
       return {
@@ -151,7 +252,14 @@ export const storeService = {
     try {
       const snap = await getDocs(collection(db, path));
       if (!snap.empty) {
-        const products = snap.docs.map(d => cleanProduct(d.data() as Product));
+        const firestoreMap = new Map(snap.docs.map(d => [d.id, d.data() as Product]));
+        const combined = INITIAL_PRODUCTS.map(ip => firestoreMap.get(ip.id) || ip);
+        snap.docs.forEach(d => {
+          if (!combined.some(p => p.id === d.id)) {
+            combined.push(d.data() as Product);
+          }
+        });
+        const products = combined.map(cleanProduct);
         return products.filter(p => p.isPublished !== false);
       }
       return INITIAL_PRODUCTS.map(cleanProduct);
@@ -179,13 +287,106 @@ export const storeService = {
       }
 
       if (p.categoryId === 'cat-daily') {
-        const dailyImages = p.id === 'dm-prod-004'
-          ? ['/images/daily_linen_dress_1792311555699.jpg', '/images/daily_shirtdress_chic_1792311557062.jpg']
-          : ['/images/daily_cotton_dress_1792311556565.jpg', '/images/daily_dress_category_1792311556508.jpg'];
+        if (p.id === 'dm-prod-004') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_linen_dress_1792311555699.jpg',
+              '/images/daily_shirtdress_chic_1792311557062.jpg',
+              '/images/daily_shirt_dress_1792394342695.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-008') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_cotton_dress_1792311556565.jpg',
+              '/images/daily_dress_category_1792311556508.jpg',
+              '/images/daily_floral_dress_1792394342263.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-010') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_shirt_dress_1792394342695.jpg',
+              '/images/daily_linen_dress_1792311555699.jpg',
+              '/images/daily_shirtdress_chic_1792311557062.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-011') {
+          return {
+            ...p,
+            images: [
+              '/images/daily_floral_dress_1792394342263.jpg',
+              '/images/daily_cotton_dress_1792311556565.jpg',
+              '/images/daily_dress_category_1792311556508.jpg',
+            ],
+          };
+        }
+        if (p.images && p.images.length > 0) {
+          return p;
+        }
         return {
           ...p,
-          images: dailyImages,
+          images: [
+            '/images/daily_shirt_dress_1792394342695.jpg',
+            '/images/daily_floral_dress_1792394342263.jpg',
+          ],
         };
+      }
+
+      if (p.categoryId === 'cat-evening') {
+        if (p.id === 'dm-prod-012') {
+          return {
+            ...p,
+            images: [
+              '/images/evening_sapphire_gown_1792394343066.jpg',
+              'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=80',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-013') {
+          return {
+            ...p,
+            images: [
+              '/images/evening_champagne_draped_1792394344950.jpg',
+              'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=80',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-014') {
+          return {
+            ...p,
+            images: [
+              '/images/evening_ruby_velvet_1792394343337.jpg',
+              'https://images.unsplash.com/photo-1550614000-4895a10e1bfd?auto=format&fit=crop&w=1000&q=80',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-005') {
+          return {
+            ...p,
+            images: [
+              'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=80',
+              'https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?auto=format&fit=crop&w=1000&q=80',
+              '/images/evening_champagne_draped_1792394344950.jpg',
+            ],
+          };
+        }
+        if (p.id === 'dm-prod-009') {
+          return {
+            ...p,
+            images: [
+              'https://images.unsplash.com/photo-1550614000-4895a10e1bfd?auto=format&fit=crop&w=1000&q=80',
+              'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=80',
+              '/images/evening_ruby_velvet_1792394343337.jpg',
+            ],
+          };
+        }
       }
 
       return {
@@ -197,7 +398,12 @@ export const storeService = {
     try {
       const snap = await getDocs(collection(db, path));
       if (!snap.empty) {
-        return snap.docs.map(d => cleanProduct(d.data() as Product));
+        const firestoreMap = new Map(snap.docs.map(d => [d.id, d.data() as Product]));
+        const combined = INITIAL_PRODUCTS.map(ip => firestoreMap.get(ip.id) || ip);
+        snap.docs.forEach(d => {
+          if (!combined.some(p => p.id === d.id)) combined.push(d.data() as Product);
+        });
+        return combined.map(cleanProduct);
       }
       return INITIAL_PRODUCTS.map(cleanProduct);
     } catch (error) {
